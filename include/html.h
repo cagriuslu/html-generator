@@ -35,11 +35,7 @@ char* HtmlTag(char *type, char *attr, int count, ...)
 	va_list vl;
 	va_start(vl, count);
 	char *content = NULL;
-	for (int i = 0; i < count; i++)
-	{
-		char *tmp = va_arg(vl, char*);
-		content = Concat(3, content, tmp, "\r\n");
-	}
+	for (int i = 0; i < count; i++) content = Concat(3, content, va_arg(vl, char*), "\r\n");
 	va_end(vl);
 	if (!content) return NULL;
 	
