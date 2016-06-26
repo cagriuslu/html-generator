@@ -5,10 +5,8 @@
 
 int main()
 {
-	char *t1 = HtmlTag("tag", NULL, 1, "abc");
-	char *t2 = HtmlTag("tag", NULL, 1, t1);
-	
-	printf("%s\n", t2);
+	char *t = Merge(NULL, NULL, 1, "");
+	printf("%s\n", t);
 	
 	return 0;
 }
