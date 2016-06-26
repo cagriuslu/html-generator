@@ -21,8 +21,7 @@ char* Concat(int count, ...)
 		if (!tmp) continue;
 
 		// resize
-		size_t len = strlen(final) + strlen(tmp) + 1;
-		final = realloc(final, len * sizeof(char));
+		final = realloc(final, strlen(final) + strlen(tmp) + 1);
 		if (!final)
 		{
 			va_end(vl);
