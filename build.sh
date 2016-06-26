@@ -1,2 +1,2 @@
 mkdir -p bin
-gcc -g test/main.c -o bin/main -Iinclude
+gcc -std=c99 test/main.c -o bin/main -Iinclude
