@@ -14,7 +14,7 @@ char* HtmlAttr(int count, ...)
 	va_list vl;
 	va_start(vl, count); // va_end
 
-	char *attr = calloc(1, sizeof(char)); // free
+	char *attr = calloc(1, 1); // free
 	if (attr == NULL)
 	{
 		va_end(vl);
@@ -34,7 +34,7 @@ char* HtmlAttr(int count, ...)
 		else if (key && value == NULL) attrLen = strlen(attr) + strlen(key) + 5;
 		else attrLen = strlen(attr) + strlen(key) + 2 + strlen(value) + 3;
 
-		attr = realloc(attr, attrLen * sizeof(char));
+		attr = realloc(attr, attrLen);
 		if (attr == NULL)
 		{
 			va_end(vl);
@@ -61,7 +61,7 @@ char* HtmlTag(char *type, char *attr, int count, ...)
 	if (type == NULL) return NULL;
 	
 	// print tag type
-	char *tag = calloc(1 + strlen(type) + 1, sizeof(char)); // free
+	char *tag = calloc(1 + strlen(type) + 1, 1); // free
 	if (tag == NULL) return NULL;
 	strcat(tag, "<");
 	strcat(tag, type);
@@ -87,25 +87,70 @@ char* HtmlTag(char *type, char *attr, int count, ...)
 	// print content
 	va_list vl;
 	va_start(vl, count); // va_end
-	char *content = MergeVaList(NULL, NULL, count, vl); // free
+	char *content = MergeVaList(NULL, "\r\n", count, vl); // free
 	va_end(vl);
 	if (content == NULL)
 	{
 		free(tag);
 		return NULL;
 	}
-
-	tag = realloc(tag, strlen(tag) + strlen(content) + 2 + strlen(type) + 2);
-	if (tag == NULL)
+	
+	// add indent and new line
+	int i;
+	for (i = 0; i < strlen(content); i)
 	{
-		free(content);
-		return NULL;
+		tag = realloc(tag, strlen(tag) + 4);
+		if (tag == NULL)
+		{
+			free(content);
+			return NULL;
+		}
+		strcat(tag, "\r\n\t");
+		
+		char *newLine = strstr(content + i, "\r\n");
+		if (newLine == NULL)
+		{
+			tag = realloc(tag, strlen(tag) + strlen(content+i) + 3);
+			if (tag == NULL)
+			{
+				free(content);
+				return NULL;
+			}
+			strcat(tag, content +i);
+			strcat(tag, "\r\n");
+			break;	
+		}
+		else
+		{
+			size_t copyLen = newLine - (content + i);
+			tag = realloc(tag, strlen(tag) + copyLen + 1);
+			if (tag == NULL)
+			{
+				free(content);
+				return NULL;
+			}
+			strncat(tag, content + i, copyLen);
+			strcat(tag, "");
+			i += copyLen + 2;
+			
+			if (i == strlen(content))
+			{
+				tag = realloc(tag, strlen(tag) + 3);
+				if (tag == NULL)
+				{
+					free(content);
+					return NULL;
+				}
+				strcat(tag, "\r\n");
+			}
+		}
 	}
-
-	strcat(tag, content);
+	
 	free(content);
-
+	
 	// print closing tag
+	tag = realloc(tag, strlen(tag) + 2 + strlen(type) + 2);
+	if (tag == NULL) return NULL;
 	strcat(tag, "</");
 	strcat(tag, type);
 	strcat(tag, ">");
@@ -118,7 +163,7 @@ char* HtmlEmptyTag(char *type, char *attr)
 	if (type == NULL) return NULL;
 	
 	// print tag type
-	char *tag = calloc(1 + strlen(type) + 1, sizeof(char)); // free
+	char *tag = calloc(1 + strlen(type) + 1, 1); // free
 	if (tag == NULL) return NULL;
 	strcat(tag, "<");
 	strcat(tag, type);

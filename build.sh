@@ -1,1 +1,1 @@
-gcc test/main.c -o bin/main -Iinclude
+gcc -g test/main.c -o bin/main -Iinclude
