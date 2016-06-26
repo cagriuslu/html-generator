@@ -9,8 +9,6 @@
 
 char* HtmlAttr(int count, ...)
 {
-	if (count < 0) return NULL;
-
 	char *attr = NULL;
 	
 	// merge attributes
@@ -21,17 +19,12 @@ char* HtmlAttr(int count, ...)
 		char *key = va_arg(vl, char*);
 		char *value = va_arg(vl, char*);
 		
-		attr = Merge(NULL, NULL, 5,
-			attr,
-			key,
-			key ? "=\"" : NULL,
-			value,
-			key ? "\" " : " ");
+		attr = Merge(5, attr, key, key ? "=\"" : NULL, value, key ? "\" " : " ");
 	}
 	va_end(vl);
 
 	// if attr is not empty rmv last space
-	if (attr[0] != '\0') attr[strlen(attr) - 1] = '\0';
+	if (attr && attr[0] != '\0') attr[strlen(attr) - 1] = '\0';
 
 	return attr;
 }
@@ -41,17 +34,17 @@ char* HtmlTag(char *type, char *attr, int count, ...)
 	// get contents
 	va_list vl;
 	va_start(vl, count);
-	char *content = MergeVaList(NULL, "\r\n", count, vl);
+	char *content = NULL;
+	for (int i = 0; i < count; i++)
+	{
+		char *tmp = va_arg(vl, char*);
+		content = Merge(3, content, tmp, "\r\n");
+	}
 	va_end(vl);
 	if (!content) return NULL;
 	
 	// print type and attributes, if any
-	char *tag = Merge(NULL, NULL, 5,
-		"<",
-		type,
-		attr ? " " : NULL,
-		attr,
-		">\r\n");
+	char *tag = Merge(5, "<", type, attr ? " " : NULL, attr, ">\r\n");
 	
 	// add indent while printing contents
 	int i = 0;
@@ -63,23 +56,19 @@ char* HtmlTag(char *type, char *attr, int count, ...)
 		lnBreak[0] = '\0';
 		lnBreak[1] = '\0';
 
-		tag = Merge(NULL, NULL, 4, tag, "\t", content + i, "\r\n");
+		tag = Merge(4, tag, "\t", content + i, "\r\n");
 		i += lnBreak - (content+i) + 2;
 	}
 	free(content);
 	
 	// print closing tag and return
-	return Merge(NULL, NULL, 4, tag, "</", type, ">");
+	return Merge(4, tag, "</", type, ">");
 }
 
 char* HtmlEmptyTag(char *type, char *attr)
 {
-	return Merge(NULL, NULL, 5,
-		"<",
-		type,
-		attr ? " " : NULL,
-		attr,
-		">");
+	return Merge(5, "<", type, attr ? " " : NULL, attr, ">");
 }
 
 #endif
+

@@ -27,7 +27,7 @@ int main()
 	
 	char *html = HtmlTag("html", NULL, 2, head, body);
 	
-	char *doc = Merge(NULL, NULL, 2, "<!DOCTYPE html>\r\n", html);
+	char *doc = Merge(2, "<!DOCTYPE html>\r\n", html);
 	
 	printf("%s\n", doc);
 	
