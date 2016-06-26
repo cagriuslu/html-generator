@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* Merge(int count, ...) 
+char* Concat(int count, ...) 
 {
 	if (count < 0) return NULL;
 
