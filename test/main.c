@@ -5,7 +5,8 @@
 
 int main()
 {
-	char *tr1d1 = HtmlTag("td", "colspan=2", 1, "Person");
+	char *tr1d1Attr = HtmlAttr(1, "colspan", "2");
+	char *tr1d1 = HtmlTag("td", tr1d1Attr, 1, "Person");
 	
 	char *tr2d1 = HtmlTag("td", NULL, 1, "Name:");
 	char *tr2d2 = HtmlTag("td", NULL, 1, "Cagri");
@@ -17,7 +18,8 @@ int main()
 	char *tr2 = HtmlTag("tr", NULL, 2, tr2d1, tr2d2);
 	char *tr3 = HtmlTag("tr", NULL, 2, tr3d1, tr3d2);
 	
-	char *table = HtmlTag("table", "border=1", 3, tr1, tr2, tr3);
+	char *tableAttr = HtmlAttr(1, "border", "1");
+	char *table = HtmlTag("table", tableAttr, 3, tr1, tr2, tr3);
 	
 	char *title = HtmlTag("title", NULL, 1, "Person Table");
 	char *head = HtmlTag("head", NULL, 1, title);
@@ -28,8 +30,6 @@ int main()
 	char *doc = Concat(2, "<!DOCTYPE html>\r\n", html);
 	
 	printf("%s\n", doc);
-	
-	// free all string
 	
 	return 0;
 }

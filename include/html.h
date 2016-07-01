@@ -7,6 +7,28 @@
 
 #include <vararg.h>
 
+char* HtmlAttr(int count, ...)
+{
+	char *attr = NULL;
+	
+	// merge attributes
+	va_list vl;
+	va_start(vl, count);
+	for (int i = 0; i < count; i++)
+	{
+		char *key = va_arg(vl, char*);
+		char *value = va_arg(vl, char*);
+		
+		attr = Concat(5, attr, key, key ? "=\"" : NULL, value, key ? "\" " : " ");
+	}
+	va_end(vl);
+
+	// if attr is not empty rmv last space
+	if (attr && attr[0] != '\0') attr[strlen(attr) - 1] = '\0';
+
+	return attr;
+}
+
 char* HtmlTag(char *type, char *attr, int count, ...)
 {
 	// get contents
